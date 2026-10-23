@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ORCA - Défi final Mission Abysse</title>
+<style>
+:root{--abyss:#061a33;--navy:#0a2d55;--blue:#0878c9;--cyan:#49d6e9;--yellow:#ffd84a;--coral:#ff7b63;--green:#36d399;--red:#ff5f6d;--white:#f8fcff;--muted:#a9c5dc}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Segoe UI,Aptos,Arial,sans-serif;background:radial-gradient(circle at 50% -20%,#0b5a82 0,#061a33 46%,#03101f 100%);color:var(--white)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:38px 38px}
+.app{width:min(980px,94vw);margin:0 auto;padding:22px 0 42px}.top{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:16px}.brand{font-weight:900;letter-spacing:1.5px;color:var(--cyan)}.tools{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #2b6799;background:#0c3765;color:#fff;border-radius:13px;padding:10px 15px;font-weight:800;cursor:pointer;transition:.18s}.btn:hover{transform:translateY(-1px);border-color:var(--cyan)}.btn.primary{background:var(--yellow);color:var(--abyss);border-color:var(--yellow)}.btn:disabled{opacity:.46;cursor:not-allowed;transform:none}
+.console{background:linear-gradient(160deg,#082746f0,#061a33f5);border:1px solid #1f6791;border-radius:27px;box-shadow:0 28px 70px #0008;overflow:hidden}.header{padding:25px 28px 20px;border-bottom:1px solid #1d557d;background:linear-gradient(90deg,#0a3159,#073d62)}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:.75rem;font-weight:900;color:var(--yellow)}h1{margin:7px 0 4px;font-size:clamp(1.8rem,5vw,3rem)}.subtitle{color:#c7dff0;margin:0}.statusbar{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:14px 20px;background:#041528}.stat{background:#0b3158;border:1px solid #245f8d;border-radius:12px;padding:9px;text-align:center;font-size:.8rem;color:var(--muted)}.stat b{display:block;color:#fff;font-size:1.05rem;margin-top:2px}.screen{padding:25px 28px 30px;min-height:470px}.message{border-left:4px solid var(--cyan);background:#08213f;border-radius:11px;padding:14px 16px;line-height:1.55;margin-bottom:18px}.message.good{border-color:var(--green);color:#c8fae7}.message.bad{border-color:var(--coral);color:#ffd8cf}.trigger{display:grid;gap:12px;max-width:690px;margin:28px auto}.input{width:100%;border:2px solid #2b77a6;border-radius:15px;padding:15px 17px;background:#04182c;color:#fff;font-size:1.05rem;outline:none}.input:focus{border-color:var(--cyan);box-shadow:0 0 0 4px #49d6e922}.question{font-size:1.25rem;line-height:1.45;margin:18px 0}.answers{display:grid;gap:11px}.answer{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;border:1px solid #2a638e;background:#0a3158;color:#fff;border-radius:15px;padding:14px 16px;cursor:pointer;font-size:1rem}.answer:hover{border-color:var(--cyan);background:#0d3e6e}.letter{flex:0 0 33px;height:33px;border-radius:9px;background:var(--yellow);color:var(--abyss);display:grid;place-items:center;font-weight:900}.progress{height:10px;background:#031326;border-radius:99px;overflow:hidden;margin-top:15px}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--yellow));transition:.3s}.final{text-align:center}.seal{width:150px;height:150px;margin:14px auto 20px;border-radius:50%;display:grid;place-items:center;border:5px solid var(--yellow);background:#0b3158;box-shadow:0 0 40px #ffd84a33;font-size:2.2rem;font-weight:900;color:var(--yellow)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.summary .card{background:#fff;color:#0a2945;border-radius:14px;padding:15px}.summary b{display:block;font-size:1.35rem;color:#086cac}.hidden{display:none!important}.small{font-size:.83rem;color:var(--muted)}
+@media(max-width:720px){.statusbar,.summary{grid-template-columns:repeat(2,1fr)}.screen,.header{padding-left:18px;padding-right:18px}.top{align-items:flex-start}.answer{font-size:.94rem}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div class="brand">MISSION ABYSSE by Sofia · NAUTILUS X</div><div class="tools"><button class="btn" id="soundBtn">🔊 Son</button><button class="btn" id="resetBtn">↻ Recommencer</button></div></div>
+  <main class="console">
+    <header class="header"><div class="eyebrow">Assistant conversationnel embarqué</div><h1>ORCA · Défi final</h1><p class="subtitle">Rapport centralisé, cinq questions aléatoires, objectif 100 %.</p></header>
+    <div class="statusbar">
+      <div class="stat">État<b id="state">En attente</b></div>
+      <div class="stat">Temps<b id="timer">05:00</b></div>
+      <div class="stat">Validées<b id="valid">0/5</b></div>
+      <div class="stat">Tentatives<b id="attempts">0</b></div>
+    </div>
+    <section class="screen">
+      <div id="startView">
+        <div class="message">📡 <strong>ORCA :</strong> En attente de vos ordres, Commandant.</div>
+        <div class="trigger">
+          <label for="triggerInput"><strong>Phrase de déclenchement</strong></label>
+          <input id="triggerInput" class="input" autocomplete="off" placeholder="Saisissez : À vos ordres mon capitaine.">
+          <button class="btn primary" id="launchBtn">Activer le défi</button>
+          <div class="small">Les variantes avec ou sans accents et ponctuation sont acceptées.</div>
+        </div>
+      </div>
+      <div id="quizView" class="hidden">
+        <div id="feedback" class="message">Défi final activé.</div>
+        <div class="eyebrow" id="phase">Premier balayage</div>
+        <div class="question" id="question"></div>
+        <div class="answers" id="answers"></div>
+        <div class="progress"><div id="progressFill"></div></div>
+      </div>
+      <div id="finalView" class="final hidden">
+        <div class="eyebrow">Salle du Coffre</div><div class="seal">5/5</div>
+        <h2>🏆 DÉFI FINAL VALIDÉ</h2>
+        <p id="finalMessage"></p>
+        <div class="summary">
+          <div class="card">Premier passage<b id="initialScore">0/5</b></div>
+          <div class="card">Résultat final<b>5/5</b></div>
+          <div class="card">Tentatives<b id="finalAttempts">0</b></div>
+          <div class="card">Temps<b id="finalTime">--:--</b></div>
+        </div>
+        <div class="message good">ORCA : « Les informations étaient centralisées, lisibles et directement exploitables. Même dans les abysses, une bonne synthèse évite de naviguer à vue. »</div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+const bank=[
+{q:"Quel événement explique pourquoi le coffre n’apparaît sur aucun plan officiel du Titanic ?",a:["Le coffre a été détruit lors du naufrage","Le coffre a été déplacé au dernier moment","Le coffre n’a jamais été embarqué"],c:1,e:"La note manuscrite précise que le coffre a été déplacé au dernier moment.",h:["Recherchez ce qui s’est passé juste avant le départ.","Consultez la note manuscrite au bas de la facture."]},
+{q:"Pourquoi une serrure à combinaison a-t-elle été installée dans la Salle Radio Marconi ?",a:["Pour protéger le matériel radio contre l’humidité","Pour limiter l’accès aux personnes autorisées","Pour sécuriser la Salle des Machines"],c:1,e:"La serrure limitait l’accès à la Salle Radio Marconi aux personnels autorisés.",h:["La raison concerne les personnes autorisées.","Consultez l’objet de l’installation dans le devis."]},
+{q:"Quel document confirme officiellement la présence d’un coffre-fort à bord du Titanic ?",a:["La facture de transport du coffre-fort","La carte d’exploration","Le rapport du sonar"],c:0,e:"La facture prouve officiellement l’embarquement du coffre-fort.",h:["Recherchez un document commercial lié au chargement.","Le document précise le transport et la livraison."]},
+{q:"Quel objet métallique a été détecté dans la Salle du Coffre ?",a:["Une forme circulaire","Une forme rectangulaire","Une forme pyramidale"],c:1,e:"L’objet M-02 détecté dans la Salle du Coffre est rectangulaire.",h:["Consultez la ligne M-02.","La forme possède quatre angles."]},
+{q:"Combien de signatures métalliques atypiques le Sonar ATLANTIS I a-t-il détectées ?",a:["3","4","5"],c:2,e:"Le sonar a identifié cinq signatures métalliques.",h:["Comptez les objets M-01 à M-05.","Le rapport répertorie cinq objets."]},
+{q:"Où la seule forme pyramidale a-t-elle été détectée ?",a:["Poste d’Observation","Salle Radio Marconi","Quartiers du Capitaine"],c:0,e:"L’objet M-05 a été détecté au Poste d’Observation.",h:["Recherchez l’objet M-05.","Cette forme se trouve près de l’ancienne vigie."]},
+{q:"Quelle découverte dans la Salle Radio Marconi correspond à l’objet M-01 ?",a:["Une ancienne clé","Une structure métallique rectangulaire rouillée","Une plaque signalétique"],c:1,e:"La structure rectangulaire rouillée derrière le pupitre correspond à M-01.",h:["La découverte est derrière le pupitre principal.","Il s’agit d’une structure avec des angles nets."]},
+{q:"Quel élément a été modifié juste avant le départ du Titanic ?",a:["L’emplacement du poste radio","Les coordonnées du navire","La combinaison de la serrure"],c:2,e:"La combinaison initiale de la serrure a été modifiée avant le départ.",h:["Consultez la note du serrurier.","La modification concerne le dispositif d’accès à la Salle Radio."]},
+{q:"Quelle salle contient une porte protégée par une serrure à code ?",a:["Salle des Machines","Salle Radio Marconi","Quartiers du Capitaine"],c:1,e:"La Salle Radio Marconi est protégée par une serrure à combinaison.",h:["Cette salle servait aux communications.","Le devis Harrington & Sons la mentionne directement."]},
+{q:"Quel est l’intérêt principal de la carte d’exploration du Titanic ?",a:["Répertorier les membres d’équipage","Localiser les zones d’exploration et relier les indices","Identifier l’emplacement exact du naufrage"],c:1,e:"La carte situe les zones et relie les indices aux secteurs du navire.",h:["Elle organise l’exploration intérieure.","Elle met en relation les lieux et les informations."]}
+];
+let selected=[],queue=[],current=null,index=0,initialCorrect=0,totalAttempts=0,retryCount={},startTime=0,timerId=null,elapsed=0,sound=true,finished=false;
+const $=id=>document.getElementById(id);
+function normalize(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,'')}
+function beep(f=600,d=.06){if(!sound)return;try{const A=window.AudioContext||window.webkitAudioContext,c=new A(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.value=.035;g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function format(sec){const m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function setMessage(t,type=''){const f=$('feedback');f.className='message '+type;f.textContent=t}
+function launch(){const accepted=['avosordresmoncapitaine'];if(!accepted.includes(normalize($('triggerInput').value))){$('triggerInput').focus();return}
+ selected=shuffle(bank.map((x,i)=>({...x,id:i}))).slice(0,5);queue=[...selected];startTime=Date.now();elapsed=0;finished=false;$('startView').classList.add('hidden');$('quizView').classList.remove('hidden');$('state').textContent='En mission';
+ timerId=setInterval(()=>{elapsed=Math.floor((Date.now()-startTime)/1000);$('timer').textContent=elapsed<=300?format(300-elapsed):'+'+format(elapsed-300)},250);setMessage('📡 Défi activé : 5 questions, 5 minutes, objectif 100 %.');showNext()}
+function showNext(){if(!queue.length){if(initialCorrect===5&&Object.keys(retryCount).length===0)return finish();const wrong=selected.filter(x=>retryCount[x.id]>0&&!x.valid);if(wrong.length){queue=[...wrong];$('phase').textContent='Rattrapage · Objectif 100 %';setMessage(`Premier balayage terminé : ${initialCorrect}/5. Les questions non validées reviennent.`)}else return finish()}
+ current=queue.shift();index++;const isRetry=retryCount[current.id]>0;$('phase').textContent=isRetry?'Rattrapage · Question à valider':`Premier balayage · Question ${Math.min(index,5)}/5`;$('question').textContent=current.q;renderAnswers(current.a);updateProgress()}
+function renderAnswers(arr){const wrap=$('answers');wrap.innerHTML='';arr.forEach((t,i)=>{const b=document.createElement('button');b.className='answer';b.innerHTML=`<span class="letter">${'ABC'[i]}</span><span>${t}</span>`;b.onclick=()=>answer(i);wrap.appendChild(b)})}
+function answer(choice){totalAttempts++;$('attempts').textContent=totalAttempts;const first=retryCount[current.id]===undefined;if(choice===current.c){current.valid=true;if(first)initialCorrect++;setMessage('✅ Réponse validée. '+current.e,'good');beep(760,.1);$('valid').textContent=selected.filter(x=>x.valid).length+'/5';setTimeout(showNext,900)}else{retryCount[current.id]=(retryCount[current.id]||0)+1;setMessage('❌ Petite dérive de navigation. '+(first?'La question reviendra.':'💡 '+current.h[Math.min(retryCount[current.id]-1,1)]),'bad');beep(190,.12);if(first){queue.push(current);setTimeout(showNext,1100)}else{queue.push(current);setTimeout(showNext,1400)}}}
+function updateProgress(){const n=selected.filter(x=>x.valid).length;$('progressFill').style.width=(n/5*100)+'%'}
+function finish(){finished=true;clearInterval(timerId);elapsed=Math.floor((Date.now()-startTime)/1000);$('quizView').classList.add('hidden');$('finalView').classList.remove('hidden');$('state').textContent='Validé';$('valid').textContent='5/5';$('timer').textContent=format(elapsed);$('initialScore').textContent=initialCorrect+'/5';$('finalAttempts').textContent=totalAttempts;$('finalTime').textContent=format(elapsed);$('finalMessage').textContent=elapsed<=300?'Mission accomplie dans la fenêtre d’exploration. Accès à la Salle du Coffre autorisé.':'Fenêtre optimale dépassée, mais objectif 100 % atteint. Accès sécurisé à la Salle du Coffre autorisé.';beep(900,.25)}
+function reset(){clearInterval(timerId);selected=[];queue=[];current=null;index=0;initialCorrect=0;totalAttempts=0;retryCount={};finished=false;$('startView').classList.remove('hidden');$('quizView').classList.add('hidden');$('finalView').classList.add('hidden');$('triggerInput').value='';$('state').textContent='En attente';$('timer').textContent='05:00';$('valid').textContent='0/5';$('attempts').textContent='0';$('progressFill').style.width='0'}
+$('launchBtn').onclick=launch;$('triggerInput').addEventListener('keydown',e=>{if(e.key==='Enter')launch()});$('resetBtn').onclick=reset;$('soundBtn').onclick=()=>{sound=!sound;$('soundBtn').textContent=sound?'🔊 Son':'🔇 Muet'};
+</script>
+</body>
+</html>
